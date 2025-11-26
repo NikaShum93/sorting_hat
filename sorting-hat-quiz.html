@@ -218,7 +218,6 @@
 
       var scale = Math.min(w / baseWidth, h / baseHeight);
 
-      // центрируем и масштабируем сцену
       wrapper.style.transform =
         "translate(-50%, -50%) scale(" + scale + ")";
     }
@@ -227,7 +226,7 @@
     window.addEventListener("load", resizeGame);
     resizeGame();
 
-    /* --------- ЛОГИКА КВИЗА --------- */
+    /* --------- ВОПРОСЫ --------- */
     var QUESTIONS = [
       {
         text: "When you set off on a trip, you usually",
@@ -241,100 +240,100 @@
       {
         text: "You come across a lost puppy in the snow. You",
         options: [
-          { letter: "A", text: "look for its owner", house: "Ravenclaw" },
-          { letter: "B", text: "take it home", house: "Slytherin" },
-          { letter: "C", text: "call your friends to help", house: "Hufflepuff" },
-          { letter: "D", text: "keep it, you always wanted a puppy", house: "Gryffindor" }
+          { letter: "A", text: "look for its tag and try to figure out the address", house: "Ravenclaw" },
+          { letter: "B", text: "take it home and keep it if no owner turns up", house: "Slytherin" },
+          { letter: "C", text: "call your friends to help you look after it", house: "Hufflepuff" },
+          { letter: "D", text: "pick it up and run to a warm place to get help", house: "Gryffindor" }
         ]
       },
       {
         text: "You run into a person from your school in town. You",
         options: [
-          { letter: "A", text: "say hello politely", house: "Ravenclaw" },
-          { letter: "B", text: "talk for one minute", house: "Slytherin" },
+          { letter: "A", text: "say hello politely and ask how they are", house: "Ravenclaw" },
+          { letter: "B", text: "talk for one minute and then move on", house: "Slytherin" },
           { letter: "C", text: "stop and chat for a long time", house: "Hufflepuff" },
-          { letter: "D", text: "pretend you didn’t see them", house: "Gryffindor" }
+          { letter: "D", text: "wave and call out their name loudly", house: "Gryffindor" }
         ]
       },
       {
         text: "You see someone trying to break in to a school building. You",
         options: [
-          { letter: "A", text: "call an adult", house: "Ravenclaw" },
-          { letter: "B", text: "watch from a safe place", house: "Slytherin" },
-          { letter: "C", text: "ask what is happening", house: "Hufflepuff" },
-          { letter: "D", text: "run away immediately", house: "Gryffindor" }
+          { letter: "A", text: "call an adult and explain what you saw", house: "Ravenclaw" },
+          { letter: "B", text: "watch from a safe place and try to work out what is going on", house: "Slytherin" },
+          { letter: "C", text: "ask them if everything is okay", house: "Hufflepuff" },
+          { letter: "D", text: "shout at them to stop and run to get help", house: "Gryffindor" }
         ]
       },
       {
         text: "A snowball fight breaks out at school. You",
         options: [
-          { letter: "A", text: "stay calm and watch", house: "Ravenclaw" },
-          { letter: "B", text: "join your friends in the fight", house: "Slytherin" },
-          { letter: "C", text: "start your own team", house: "Hufflepuff" },
-          { letter: "D", text: "throw the first snowball", house: "Gryffindor" }
+          { letter: "A", text: "stay calm and watch from the side", house: "Ravenclaw" },
+          { letter: "B", text: "quickly join the strongest team", house: "Slytherin" },
+          { letter: "C", text: "join your friends and try to keep the game fair", house: "Hufflepuff" },
+          { letter: "D", text: "throw the first snowball and run into the middle", house: "Gryffindor" }
         ]
       },
       {
         text: "Holiday snacks suddenly take over the table. You",
         options: [
-          { letter: "A", text: "organise the snacks nicely", house: "Ravenclaw" },
-          { letter: "B", text: "try a little bit of everything", house: "Slytherin" },
-          { letter: "C", text: "call your family to come and eat", house: "Hufflepuff" },
-          { letter: "D", text: "eat the best things first", house: "Gryffindor" }
+          { letter: "A", text: "organise the snacks nicely into groups", house: "Ravenclaw" },
+          { letter: "B", text: "quietly take the best snacks and keep them on your side", house: "Slytherin" },
+          { letter: "C", text: "call your family to come and eat together", house: "Hufflepuff" },
+          { letter: "D", text: "grab some snacks and pass them round the room", house: "Gryffindor" }
         ]
       },
       {
         text: "You feel like you might pass out after running in the cold. You",
         options: [
-          { letter: "A", text: "breathe slowly and sit down", house: "Ravenclaw" },
-          { letter: "B", text: "drink some water", house: "Slytherin" },
-          { letter: "C", text: "ask a friend for help", house: "Hufflepuff" },
-          { letter: "D", text: "lie on the ground very dramatically", house: "Gryffindor" }
+          { letter: "A", text: "sit down, breathe slowly and calm yourself down", house: "Ravenclaw" },
+          { letter: "B", text: "walk away to a quiet place and drink some water", house: "Slytherin" },
+          { letter: "C", text: "ask a friend to stay with you and help you", house: "Hufflepuff" },
+          { letter: "D", text: "laugh, say 'I'm fine!' and try to carry on running", house: "Gryffindor" }
         ]
       },
       {
         text: "What is the hardest thing to get over in winter?",
         options: [
-          { letter: "A", text: "the cold weather", house: "Ravenclaw" },
-          { letter: "B", text: "the short days", house: "Slytherin" },
-          { letter: "C", text: "too much school", house: "Hufflepuff" },
-          { letter: "D", text: "waking up early", house: "Gryffindor" }
+          { letter: "A", text: "too much homework and school work", house: "Ravenclaw" },
+          { letter: "B", text: "the short days, you want more time for your plans", house: "Slytherin" },
+          { letter: "C", text: "being away from friends and family", house: "Hufflepuff" },
+          { letter: "D", text: "waking up early when it is still dark", house: "Gryffindor" }
         ]
       },
       {
         text: "You forgot your homework. You need to make up a reason. You",
         options: [
-          { letter: "A", text: "tell the truth", house: "Ravenclaw" },
-          { letter: "B", text: "say you were very busy", house: "Slytherin" },
-          { letter: "C", text: "invent a creative story", house: "Hufflepuff" },
-          { letter: "D", text: "blame your cat", house: "Gryffindor" }
+          { letter: "A", text: "tell the truth and say you forgot it at home", house: "Ravenclaw" },
+          { letter: "B", text: "say you were very busy with another big project", house: "Slytherin" },
+          { letter: "C", text: "say sorry and offer to stay after class to finish it", house: "Hufflepuff" },
+          { letter: "D", text: "make up a funny story about your cat eating it", house: "Gryffindor" }
         ]
       },
       {
         text: "A friend always turns up late to winter meetups. You",
         options: [
-          { letter: "A", text: "forgive them", house: "Ravenclaw" },
-          { letter: "B", text: "laugh about it", house: "Slytherin" },
-          { letter: "C", text: "tell them, 'It’s okay'", house: "Hufflepuff" },
-          { letter: "D", text: "roll your eyes", house: "Gryffindor" }
+          { letter: "A", text: "talk to them and try to work out why it happens", house: "Ravenclaw" },
+          { letter: "B", text: "laugh about it but start to make your own plans", house: "Slytherin" },
+          { letter: "C", text: "tell them, 'It’s okay' and wait with them", house: "Hufflepuff" },
+          { letter: "D", text: "roll your eyes but still run to meet them with a big hug", house: "Gryffindor" }
         ]
       },
       {
         text: "You want to carry on with a project, but you feel tired. You",
         options: [
-          { letter: "A", text: "make a simple plan", house: "Ravenclaw" },
-          { letter: "B", text: "turn on some music", house: "Slytherin" },
-          { letter: "C", text: "ask friends to help you", house: "Hufflepuff" },
-          { letter: "D", text: "take a long break first", house: "Gryffindor" }
+          { letter: "A", text: "make a simple plan and break it into small steps", house: "Ravenclaw" },
+          { letter: "B", text: "turn on some music to get yourself back into the mood", house: "Slytherin" },
+          { letter: "C", text: "ask friends to help you and work together", house: "Hufflepuff" },
+          { letter: "D", text: "take a quick break, then jump back in with energy", house: "Gryffindor" }
         ]
       },
       {
         text: "You are trying to figure out a new winter recipe. You",
         options: [
-          { letter: "A", text: "follow the instructions exactly", house: "Ravenclaw" },
-          { letter: "B", text: "try the easy steps first", house: "Slytherin" },
-          { letter: "C", text: "ask someone to help you", house: "Hufflepuff" },
-          { letter: "D", text: "just guess and hope it works", house: "Gryffindor" }
+          { letter: "A", text: "follow the instructions exactly, step by step", house: "Ravenclaw" },
+          { letter: "B", text: "try the easy steps first and change the recipe to your taste", house: "Slytherin" },
+          { letter: "C", text: "ask someone to help you cook it together", house: "Hufflepuff" },
+          { letter: "D", text: "guess the amounts and just see how it turns out", house: "Gryffindor" }
         ]
       }
     ];
@@ -362,8 +361,10 @@
       }
     };
 
+    /* --------- ЛОГИКА КВИЗА + РАНДОМ ПОРЯДКА ОТВЕТОВ --------- */
     var currentIndex = 0;
     var scores = { Ravenclaw: 0, Slytherin: 0, Hufflepuff: 0, Gryffindor: 0 };
+    var lastAnswerHouse = null;
 
     var welcomePanel = document.getElementById("welcome-panel");
     var quizPanel = document.getElementById("quiz-panel");
@@ -397,7 +398,13 @@
       var q = QUESTIONS[currentIndex];
       questionCounterEl.textContent = "Question " + (currentIndex + 1) + " of " + QUESTIONS.length;
       questionTextEl.textContent = q.text;
-      q.options.forEach(function(opt, i) {
+
+      // делаем копию и перемешиваем варианты
+      var shuffled = q.options.slice().sort(function() {
+        return Math.random() - 0.5;
+      });
+
+      shuffled.forEach(function(opt, i) {
         var btn = answerButtons[i];
         var letterSpan = btn.querySelector("span:first-child");
         var textSpan = btn.querySelector(".answer-text");
@@ -412,6 +419,8 @@
       var house = btn.getAttribute("data-house");
       if (!house) return;
 
+      lastAnswerHouse = house;
+
       btn.classList.add("clicked");
       setTimeout(function() {
         btn.classList.remove("clicked");
@@ -421,14 +430,31 @@
 
       var isLast = currentIndex === QUESTIONS.length - 1;
       if (isLast) {
-        var bestHouse = "Gryffindor";
-        var bestScore = -1;
+        var maxScore = -1;
         for (var h in scores) {
-          if (scores[h] > bestScore) {
-            bestScore = scores[h];
-            bestHouse = h;
+          if (scores[h] > maxScore) {
+            maxScore = scores[h];
           }
         }
+
+        var candidates = [];
+        for (var h2 in scores) {
+          if (scores[h2] === maxScore) {
+            candidates.push(h2);
+          }
+        }
+
+        var bestHouse;
+        if (candidates.length === 1) {
+          bestHouse = candidates[0];
+        } else {
+          if (lastAnswerHouse && candidates.indexOf(lastAnswerHouse) !== -1) {
+            bestHouse = lastAnswerHouse;
+          } else {
+            bestHouse = candidates[0];
+          }
+        }
+
         var info = HOUSE_TEXT[bestHouse];
         resultCrestEl.src = info.crest;
         resultCrestEl.alt = bestHouse;
@@ -447,6 +473,7 @@
     document.getElementById("begin-btn").addEventListener("click", function() {
       currentIndex = 0;
       scores = { Ravenclaw: 0, Slytherin: 0, Hufflepuff: 0, Gryffindor: 0 };
+      lastAnswerHouse = null;
       renderQuestion();
       showQuiz();
     });
@@ -454,6 +481,7 @@
     document.getElementById("restart-btn").addEventListener("click", function() {
       scores = { Ravenclaw: 0, Slytherin: 0, Hufflepuff: 0, Gryffindor: 0 };
       currentIndex = 0;
+      lastAnswerHouse = null;
       renderQuestion();
       showWelcome();
     });
