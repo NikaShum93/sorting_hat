@@ -12,18 +12,21 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: transparent; /* чтобы не было чёрных полей в Genially */
+      background: transparent; /* чтобы не конфликтовало с фоном Genially */
     }
 
+    /* центрируем сцену внутри iframe */
     body {
-      /* убрали центрирующий flex, чтобы ничего не вылезало за пределы iframe */
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    /* Обёртка и сцена теперь просто занимают весь iframe */
+    /* виртуальная сцена 1920×1080, которую мы будем масштабировать */
     #stage-wrapper {
-      width: 100%;
-      height: 100%;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: center center;
     }
 
     #stage {
@@ -33,6 +36,7 @@
       background-size: cover;
       background-position: center;
       position: relative;
+
       display: flex;
       align-items: center;
       justify-content: flex-end;
@@ -91,7 +95,7 @@
   <div id="stage-wrapper">
     <div id="stage">
       <div class="h-full flex items-center justify-end pr-12 w-full">
-        <div id="ui-column" class="flex flex-col gap-4 items-stretch text-[20px] text-amber-50" style="max-width: 640px; width: 100%;">
+        <div id="ui-column" class="flex flex-col gap-4 items-stretch text-[20px] text-amber-50" style="width: 640px;">
           <div id="welcome-panel" class="rounded-3xl border border-amber-200/70 bg-slate-950/70 backdrop-blur-xl shadow-[0_0_40px_rgba(0,0,0,0.8)] px-8 py-8">
             <h1 class="text-4xl font-extrabold mb-3 drop-shadow-[0_0_20px_rgba(0,0,0,0.9)]">
               Sorting Hat
@@ -197,6 +201,32 @@
   </div>
 
   <script>
+    /* ---------- АВТОМАСШТАБИРОВАНИЕ ПОД ФРЕЙМ ---------- */
+    function updateStageScale() {
+      var wrapper = document.getElementById("stage-wrapper");
+      var baseWidth = 1920;
+      var baseHeight = 1080;
+
+      // размер внутри iframe
+      var containerWidth = document.documentElement.clientWidth || window.innerWidth;
+      var containerHeight = document.documentElement.clientHeight || window.innerHeight;
+
+      var scale = Math.min(
+        containerWidth / baseWidth,
+        containerHeight / baseHeight
+      );
+
+      // небольшой запас, чтобы Genially-кнопки снизу не перекрывали
+      scale *= 0.95;
+
+      wrapper.style.transform = "scale(" + scale + ")";
+    }
+
+    window.addEventListener("resize", updateStageScale);
+    window.addEventListener("load", updateStageScale);
+    updateStageScale();
+
+    /* ---------- ЛОГИКА ТЕСТА ---------- */
     var QUESTIONS = [
       {
         text: "When you set off on a trip, you usually",
@@ -212,222 +242,4 @@
         options: [
           { letter: "A", text: "look for its owner", house: "Ravenclaw" },
           { letter: "B", text: "take it home", house: "Slytherin" },
-          { letter: "C", text: "call your friends to help", house: "Hufflepuff" },
-          { letter: "D", text: "keep it, you always wanted a puppy", house: "Gryffindor" }
-        ]
-      },
-      {
-        text: "You run into a person from your school in town. You",
-        options: [
-          { letter: "A", text: "say hello politely", house: "Ravenclaw" },
-          { letter: "B", text: "talk for one minute", house: "Slytherin" },
-          { letter: "C", text: "stop and chat for a long time", house: "Hufflepuff" },
-          { letter: "D", text: "pretend you didn’t see them", house: "Gryffindor" }
-        ]
-      },
-      {
-        text: "You see someone trying to break in to a school building. You",
-        options: [
-          { letter: "A", text: "call an adult", house: "Ravenclaw" },
-          { letter: "B", text: "watch from a safe place", house: "Slytherin" },
-          { letter: "C", text: "ask what is happening", house: "Hufflepuff" },
-          { letter: "D", text: "run away immediately", house: "Gryffindor" }
-        ]
-      },
-      {
-        text: "A snowball fight breaks out at school. You",
-        options: [
-          { letter: "A", text: "stay calm and watch", house: "Ravenclaw" },
-          { letter: "B", text: "join your friends in the fight", house: "Slytherin" },
-          { letter: "C", text: "start your own team", house: "Hufflepuff" },
-          { letter: "D", text: "throw the first snowball", house: "Gryffindor" }
-        ]
-      },
-      {
-        text: "Holiday snacks suddenly take over the table. You",
-        options: [
-          { letter: "A", text: "organise the snacks nicely", house: "Ravenclaw" },
-          { letter: "B", text: "try a little bit of everything", house: "Slytherin" },
-          { letter: "C", text: "call your family to come and eat", house: "Hufflepuff" },
-          { letter: "D", text: "eat the best things first", house: "Gryffindor" }
-        ]
-      },
-      {
-        text: "You feel like you might pass out after running in the cold. You",
-        options: [
-          { letter: "A", text: "breathe slowly and sit down", house: "Ravenclaw" },
-          { letter: "B", text: "drink some water", house: "Slytherin" },
-          { letter: "C", text: "ask a friend for help", house: "Hufflepuff" },
-          { letter: "D", text: "lie on the ground very dramatically", house: "Gryffindor" }
-        ]
-      },
-      {
-        text: "What is the hardest thing to get over in winter?",
-        options: [
-          { letter: "A", text: "the cold weather", house: "Ravenclaw" },
-          { letter: "B", text: "the short days", house: "Slytherin" },
-          { letter: "C", text: "too much school", house: "Hufflepuff" },
-          { letter: "D", text: "waking up early", house: "Gryffindor" }
-        ]
-      },
-      {
-        text: "You forgot your homework. You need to make up a reason. You",
-        options: [
-          { letter: "A", text: "tell the truth", house: "Ravenclaw" },
-          { letter: "B", text: "say you were very busy", house: "Slytherin" },
-          { letter: "C", text: "invent a creative story", house: "Hufflepuff" },
-          { letter: "D", text: "blame your cat", house: "Gryffindor" }
-        ]
-      },
-      {
-        text: "A friend always turns up late to winter meetups. You",
-        options: [
-          { letter: "A", text: "forgive them", house: "Ravenclaw" },
-          { letter: "B", text: "laugh about it", house: "Slytherin" },
-          { letter: "C", text: "tell them, 'It’s okay'", house: "Hufflepuff" },
-          { letter: "D", text: "roll your eyes", house: "Gryffindor" }
-        ]
-      },
-      {
-        text: "You want to carry on with a project, but you feel tired. You",
-        options: [
-          { letter: "A", text: "make a simple plan", house: "Ravenclaw" },
-          { letter: "B", text: "turn on some music", house: "Slytherin" },
-          { letter: "C", text: "ask friends to help you", house: "Hufflepuff" },
-          { letter: "D", text: "take a long break first", house: "Gryffindor" }
-        ]
-      },
-      {
-        text: "You are trying to figure out a new winter recipe. You",
-        options: [
-          { letter: "A", text: "follow the instructions exactly", house: "Ravenclaw" },
-          { letter: "B", text: "try the easy steps first", house: "Slytherin" },
-          { letter: "C", text: "ask someone to help you", house: "Hufflepuff" },
-          { letter: "D", text: "just guess and hope it works", house: "Gryffindor" }
-        ]
-      }
-    ];
-
-    var HOUSE_TEXT = {
-      Gryffindor: {
-        crest: "https://i.postimg.cc/nV6mG0FP/photo-2025-11-24-14-40-32.jpg",
-        speech:
-          "Oh! A brave one! You jump into new things so fast, you just run into every adventure. You carry on, even when it is difficult. You can make up fun ideas and jump into adventures. Well then… no fear, no doubts… GRYFFINDOR!"
-      },
-      Slytherin: {
-        crest: "https://i.postimg.cc/KcKLTd2W/photo-2025-11-24-14-41-13.jpg",
-        speech:
-          "Oh, interesting… very interesting. You always turn up with a quick idea. You like to take over when things get messy. Smart, fast, confident… yes, I see your style. No doubt about it… SLYTHERIN!"
-      },
-      Hufflepuff: {
-        crest: "https://i.postimg.cc/zD9hF0z2/photo-2025-11-24-14-42-30.jpg",
-        speech:
-          "Ahh… such a warm heart. You always try to help, to stay kind, to carry on with friends. Even when things are hard to get over, you stay calm. So patient… so gentle… I don’t need more time for this one. HUFFLEPUFF!"
-      },
-      Ravenclaw: {
-        crest: "https://i.postimg.cc/3rPGFn8P/photo-2025-11-24-14-43-20.jpg",
-        speech:
-          "Hmm… let me think… yes, yes… I can see it now. You like to think first, don’t you? Always trying to figure out every little detail. You like to set off with a clear plan, not with chaos. Very clever, very calm… Oh, I know exactly where you belong. RAVENCLAW!"
-      }
-    };
-
-    var currentIndex = 0;
-    var scores = { Ravenclaw: 0, Slytherin: 0, Hufflepuff: 0, Gryffindor: 0 };
-
-    var welcomePanel = document.getElementById("welcome-panel");
-    var quizPanel = document.getElementById("quiz-panel");
-    var resultPanel = document.getElementById("result-panel");
-
-    var questionCounterEl = document.getElementById("question-counter");
-    var questionTextEl = document.getElementById("question-text");
-    var answerButtons = Array.prototype.slice.call(document.querySelectorAll(".answer-btn"));
-    var resultCrestEl = document.getElementById("result-crest");
-    var resultSpeechEl = document.getElementById("result-speech");
-
-    function showWelcome() {
-      welcomePanel.classList.remove("hidden");
-      quizPanel.classList.add("hidden");
-      resultPanel.classList.add("hidden");
-    }
-
-    function showQuiz() {
-      welcomePanel.classList.add("hidden");
-      quizPanel.classList.remove("hidden");
-      resultPanel.classList.add("hidden");
-    }
-
-    function showResult() {
-      welcomePanel.classList.add("hidden");
-      quizPanel.classList.add("hidden");
-      resultPanel.classList.remove("hidden");
-    }
-
-    function renderQuestion() {
-      var q = QUESTIONS[currentIndex];
-      questionCounterEl.textContent = "Question " + (currentIndex + 1) + " of " + QUESTIONS.length;
-      questionTextEl.textContent = q.text;
-      q.options.forEach(function(opt, i) {
-        var btn = answerButtons[i];
-        var letterSpan = btn.querySelector("span:first-child");
-        var textSpan = btn.querySelector(".answer-text");
-        if (letterSpan) letterSpan.textContent = opt.letter;
-        textSpan.textContent = opt.text;
-        btn.setAttribute("data-house", opt.house);
-      });
-    }
-
-    function handleAnswerClick(e) {
-      var btn = e.currentTarget;
-      var house = btn.getAttribute("data-house");
-      if (!house) return;
-
-      btn.classList.add("clicked");
-      setTimeout(function() {
-        btn.classList.remove("clicked");
-      }, 220);
-
-      scores[house] += 1;
-
-      var isLast = currentIndex === QUESTIONS.length - 1;
-      if (isLast) {
-        var bestHouse = "Gryffindor";
-        var bestScore = -1;
-        for (var h in scores) {
-          if (scores[h] > bestScore) {
-            bestScore = scores[h];
-            bestHouse = h;
-          }
-        }
-        var info = HOUSE_TEXT[bestHouse];
-        resultCrestEl.src = info.crest;
-        resultCrestEl.alt = bestHouse;
-        resultSpeechEl.textContent = info.speech;
-        showResult();
-      } else {
-        currentIndex += 1;
-        renderQuestion();
-      }
-    }
-
-    answerButtons.forEach(function(btn) {
-      btn.addEventListener("click", handleAnswerClick);
-    });
-
-    document.getElementById("begin-btn").addEventListener("click", function() {
-      currentIndex = 0;
-      scores = { Ravenclaw: 0, Slytherin: 0, Hufflepuff: 0, Gryffindor: 0 };
-      renderQuestion();
-      showQuiz();
-    });
-
-    document.getElementById("restart-btn").addEventListener("click", function() {
-      scores = { Ravenclaw: 0, Slytherin: 0, Hufflepuff: 0, Gryffindor: 0 };
-      currentIndex = 0;
-      renderQuestion();
-      showWelcome();
-    });
-
-    showWelcome();
-  </script>
-</body>
-</html>
+          { letter: "C", text: "call your friends to help", house: "Hufflep
