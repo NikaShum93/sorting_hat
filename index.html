@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winter Sorting Hat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            background: url('https://i.postimg.cc/FHkKR4Xm/photo-2025-11-24-14-34-50.jpg') no-repeat center center/cover;
+            overflow: hidden;
+            color: white;
+        }
+
+        .quiz-container {
+            position: fixed;
+            right: 32px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 400px;
+            max-width: 90vw;
+            height: 600px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            padding: 40px 30px;
+            height: 100%;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #a8e6cf, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(168, 230, 207, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            max-width: 300px;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .answer {
+            padding: 18px 24px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .answer:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .answer:active {
+            transform: scale(0.98);
+        }
+
+        .answer.selected {
+            background: linear-gradient(45deg, rgba(168, 230, 207, 0.4), rgba(255, 217, 61, 0.4));
+            border-color: rgba(168, 230, 207, 0.6);
+            box-shadow: 0 0 20px rgba(168, 230, 207, 0.4);
+        }
+
+        .btn {
+            padding: 16px 40px;
+            background: linear-gradient(45deg, #a8e6cf, #ffd93d);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(168, 230, 207, 0.4);
+            margin-top: 20px;
+            min-width: 180px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(168, 230, 207, 0.6);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .result-name {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #a8e6cf, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(168, 230, 207, 0.5);
+        }
+
+        .result-description {
+            line-height: 1.6;
+            opacity: 0.95;
+            max-width: 320px;
+            margin-bottom: 30px;
+        }
+
+        .progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #a8e6cf, #ffd93d);
+            transition: width 0.3s ease;
+        }
+
+        .progress-bar {
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            height: 4px;
+            border-radius: 0 2px 2px 0;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                right: 16px;
+                left: 16px;
+                width: auto;
+                max-width: none;
+                height: 85vh;
+                top: 7.5vh;
+                transform: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8em; }
+            .question-text { font-size: 1.1em; }
+            .answer { padding: 15px 20px; font-size: 0.95em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container" id="quizContainer">
+        <!-- Welcome Screen -->
+        <div class="screen active" id="welcomeScreen">
+            <h1 id="quizTitle"></h1>
+            <p class="subtitle" id="quizSubtitle"></p>
+            <button class="btn" id="startBtn">Begin the Sorting</button>
+        </div>
+
+        <!-- Questions Screen -->
+        <div class="screen" id="questionsScreen">
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <h2 class="question-text" id="questionText"></h2>
+            <div class="answers" id="answers"></div>
+        </div>
+
+        <!-- Result Screen -->
+        <div class="screen" id="resultScreen">
+            <h2 class="result-name" id="resultName"></h2>
+            <p class="result-description" id="resultDescription"></p>
+            <button class="btn" id="againBtn">Try again</button>
+        </div>
+    </div>
+
+    <script>
+        const QUIZ_DATA = {
+            title: "Winter Sorting Hat",
+            subtitle: "Answer a few winter questions and let the magic hat choose your house. Be yourself and follow your winter heart.",
+            buttonTextStart: "Begin the Sorting",
+            buttonTextAgain: "Try again",
+
+            results: [
+                {
+                    key: "brave",
+                    name: "Snow Lion House",
+                    description: "You are the kind of person who runs into snowy adventures. You feel excited when you play in the cold wind. You can help friends in winter games. You should always be brave like a lion in the snow. The school loves your energy!",
+                    imageUrl: "PLACEHOLDER_IMAGE_brave"
+                },
+                {
+                    key: "wise",
+                    name: "Ice Owl House",
+                    description: "You are the kind of person who reads books by the fire. You stay calm when snow falls outside. You plan smart projects for winter lessons. You can choose the best ideas for your classmates. The school sees your wise owl spirit.",
+                    imageUrl: "PLACEHOLDER_IMAGE_wise"
+                },
+                {
+                    key: "loyal",
+                    name: "Frost Badger House",
+                    description: "You are the kind of person who helps friends with hot chocolate. You join every winter event with a smile. You talk and make everyone feel warm. You should always be friendly like a badger in the frost. The school needs your loyal heart.",
+                    imageUrl: "PLACEHOLDER_IMAGE_loyal"
+                },
+                {
+                    key: "ambitious",
+                    name: "Glacier Serpent House",
+                    description: "You are the kind of person who plans careful steps in the snow. You feel shy but dream big for winter quests. You can lead with smart choices. You should use your ideas to win school challenges. The school admires your glacier ambition.",
+                    imageUrl: "PLACEHOLDER_IMAGE_ambitious"
+                }
+            ],
+
+            questions: [
+                {
+                    text: "It snows a lot. What do you do?",
+                    answers: [
+                        { text: "Run and play snowball fights.", resultKey: "brave" },
+                        { text: "Read a book about snow magic.", resultKey: "wise" },
+                        { text: "Help friends build a snowman.", resultKey: "loyal" },
+                        { text: "Plan the biggest snow castle.", resultKey: "ambitious" }
+                    ]
+                },
+                {
+                    text: "You see a new winter game. Do you...?",
+                    answers: [
+                        { text: "Join and play fast!", resultKey: "brave" },
+                        { text: "Think and choose first.", resultKey: "wise" },
+                        { text: "Talk to friends and join them.", resultKey: "loyal" },
+                        { text: "Plan how to win it.", resultKey: "ambitious" }
+                    ]
+                },
+                {
+                    text: "The teacher asks for a winter project. You...?",
+                    answers: [
+                        { text: "Get excited and run to start.", resultKey: "brave" },
+                        { text: "Read books to plan it calm.", resultKey: "wise" },
+                        { text: "Help your classmates join.", resultKey: "loyal" },
+                        { text: "Make a careful big idea.", resultKey: "ambitious" }
+                    ]
+                },
+                {
+                    text: "Friends feel cold outside. What do you do?",
+                    answers: [
+                        { text: "Play a game to warm up.", resultKey: "brave" },
+                        { text: "Choose the best warm spot.", resultKey: "wise" },
+                        { text: "Talk and share hot chocolate.", resultKey: "loyal" },
+                        { text: "Plan a cozy winter party.", resultKey: "ambitious" }
+                    ]
+                },
+                {
+                    text: "Snow blocks the school door. You...?",
+                    answers: [
+                        { text: "Run and push the snow away.", resultKey: "brave" },
+                        { text: "Read how to melt it smart.", resultKey: "wise" },
+                        { text: "Join friends to help open it.", resultKey: "loyal" },
+                        { text: "Think of a careful way first.", resultKey: "ambitious" }
+                    ]
+                },
+                {
+                    text: "Winter lesson starts now. Are you...?",
+                    answers: [
+                        { text: "Excited to play magic games.", resultKey: "brave" },
+                        { text: "Calm and ready to learn.", resultKey: "wise" },
+                        { text: "Friendly and talk to all.", resultKey: "loyal" },
+                        { text: "Shy but with big plans.", resultKey: "ambitious" }
+                    ]
+                },
+                {
+                    text: "You find a magic ice crystal. Do you...?",
+                    answers: [
+                        { text: "Run to show and play with it.", resultKey: "brave" },
+                        { text: "Read what it can do.", resultKey: "wise" },
+                        { text: "Help friends share it.", resultKey: "loyal" },
+                        { text: "Plan how to use it best.", resultKey: "ambitious" }
+                    ]
+                },
+                {
+                    text: "Classmates argue in the snow. You...?",
+                    answers: [
+                        { text: "Be brave and stop the fight.", resultKey: "brave" },
+                        { text: "Stay calm and choose words.", resultKey: "wise" },
+                        { text: "Talk friendly to all.", resultKey: "loyal" },
+                        { text: "Think careful to fix it.", resultKey: "ambitious" }
+                    ]
+                },
+                {
+                    text: "Hot chocolate time! What do you do?",
+                    answers: [
+                        { text: "Play a game while drinking.", resultKey: "brave" },
+                        { text: "Read a winter story near it.", resultKey: "wise" },
+                        { text: "Join friends and talk.", resultKey: "loyal" },
+                        { text: "Plan the next fun event.", resultKey: "ambitious" }
+                    ]
+                },
+                {
+                    text: "A shy friend skips winter play. You...?",
+                    answers: [
+                        { text: "Run and pull them to play.", resultKey: "brave" },
+                        { text: "Plan a calm way to join.", resultKey: "wise" },
+                        { text: "Help with friendly words.", resultKey: "loyal" },
+                        { text: "Show a smart reason to come.", resultKey: "ambitious" }
+                    ]
+                },
+                {
+                    text: "Big snow storm comes. The school...?",
+                    answers: [
+                        { text: "You play brave in the wind.", resultKey: "brave" },
+                        { text: "You read and stay calm.", resultKey: "wise" },
+                        { text: "You talk and help all.", resultKey: "loyal" },
+                        { text: "You plan safe ideas.", resultKey: "ambitious" }
+                    ]
+                },
+                {
+                    text: "End of winter term. You feel...?",
+                    answers: [
+                        { text: "Excited for snow runs.", resultKey: "brave" },
+                        { text: "Calm with book plans.", resultKey: "wise" },
+                        { text: "Friendly with class joins.", resultKey: "loyal" },
+                        { text: "Careful with big dreams.", resultKey: "ambitious" }
+                    ]
+                }
+            ]
+        };
+
+        let currentQuestion = 0;
+        let scores = {};
+
+        const screens = {
+            welcome: document.getElementById('welcomeScreen'),
+            questions: document.getElementById('questionsScreen'),
+            result: document.getElementById('resultScreen')
+        };
+
+        const elements = {
+            title: document.getElementById('quizTitle'),
+            subtitle: document.getElementById('quizSubtitle'),
+            startBtn: document.getElementById('startBtn'),
+            questionText: document.getElementById('questionText'),
+            answers: document.getElementById('answers'),
+            progress: document.getElementById('progress'),
+            resultName: document.getElementById('resultName'),
+            resultDescription: document.getElementById('resultDescription'),
+            againBtn: document.getElementById('againBtn')
+        };
+
+        function showScreen(screenName) {
+            Object.values(screens).forEach(screen => screen.classList.remove('active'));
+            screens[screenName].classList.add('active');
+        }
+
+        function init() {
+            elements.title.textContent = QUIZ_DATA.title;
+            elements.subtitle.textContent = QUIZ_DATA.subtitle;
+            elements.startBtn.textContent = QUIZ_DATA.buttonTextStart;
+            elements.againBtn.textContent = QUIZ_DATA.buttonTextAgain;
+
+            QUIZ_DATA.results.forEach(result => {
+                scores[result.key] = 0;
+            });
+
+            elements.startBtn.addEventListener('click', startQuiz);
+            elements.againBtn.addEventListener('click', restartQuiz);
+        }
+
+        function startQuiz() {
+            currentQuestion = 0;
+            Object.keys(scores).forEach(key => scores[key] = 0);
+            showScreen('questions');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = QUIZ_DATA.questions[currentQuestion];
+            elements.questionText.textContent = question.text;
+            
+            elements.answers.innerHTML = '';
+            question.answers.forEach((answer, index) => {
+                const answerEl = document.createElement('div');
+                answerEl.className = 'answer';
+                answerEl.textContent = answer.text;
+                answerEl.addEventListener('click', () => selectAnswer(answer, answerEl));
+                elements.answers.appendChild(answerEl);
+            });
+
+            elements.progress.style.width = `${((currentQuestion + 1) / QUIZ_DATA.questions.length) * 100}%`;
+        }
+
+        function selectAnswer(answer, element) {
+            document.querySelectorAll('.answer').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            setTimeout(() => {
+                scores[answer.resultKey]++;
+                currentQuestion++;
+                
+                if (currentQuestion < QUIZ_DATA.questions.length) {
+                    showQuestion();
+                } else {
+                    showResult();
+                }
+            }, 300);
+        }
+
+        function showResult() {
+            const maxScore = Math.max(...Object.values(scores));
+            const resultKeys = Object.keys(scores).filter(key => scores[key] === maxScore);
+            const result = QUIZ_DATA.results.find(r => r.key === resultKeys[0]);
+
+            elements.resultName.textContent = result.name;
+            elements.resultDescription.textContent = result.description;
+            showScreen('result');
+        }
+
+        function restartQuiz() {
+            showScreen('welcome');
+        }
+
+        init();
+    </script>
+</body>
+</html>
