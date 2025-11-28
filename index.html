@@ -13,206 +13,260 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            height: 100vh;
-            background: url('https://i.postimg.cc/FHkKR4Xm/photo-2025-11-24-14-34-50.jpg') no-repeat center center/cover;
-            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: row;
+            background-image: url('https://i.postimg.cc/FHkKR4Xm/photo-2025-11-24-14-34-50.jpg');
+            background-size: cover;
+            background-position: left center;
             color: white;
+            overflow-x: hidden;
         }
 
-        .quiz-container {
-            position: fixed;
-            right: 32px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 400px;
-            max-width: 90vw;
-            height: 600px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
+        .hero {
+            flex-basis: 60%;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.35);
+        }
+
+        .game-zone {
+            flex-basis: 40%;
             display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transition: all 0.4s ease;
+            align-items: center;
+            justify-content: center;
+            padding-right: 32px;
+        }
+
+        .quiz-card {
+            max-width: 560px;
+            width: 100%;
+            background: rgba(0,0,0,0.35);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            border: 1px solid rgba(255,230,120,0.55);
+            box-shadow: 0 0 40px rgba(255,230,120,0.3);
+            padding: 32px;
+            position: relative;
         }
 
         .screen {
             display: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.35s ease;
             flex-direction: column;
-            padding: 40px 30px;
             height: 100%;
             text-align: center;
-            justify-content: center;
-            align-items: center;
         }
 
         .screen.active {
             display: flex;
+            opacity: 1;
+            transform: translateY(0);
         }
 
         h1 {
-            font-size: 2.2em;
-            margin-bottom: 20px;
-            background: linear-gradient(45deg, #a8e6cf, #ffd93d);
+            font-size: 2.5em;
+            margin-bottom: 24px;
+            background: linear-gradient(45deg, #ffd93d, #ff6b35);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-shadow: 0 0 30px rgba(168, 230, 207, 0.5);
+            text-shadow: 0 0 30px rgba(255,230,120,0.6);
         }
 
         .subtitle {
-            font-size: 1.1em;
+            font-size: 1.2em;
             line-height: 1.6;
             margin-bottom: 40px;
             opacity: 0.9;
-            max-width: 300px;
         }
 
         .question-text {
-            font-size: 1.3em;
-            margin-bottom: 30px;
+            font-size: 1.5em;
+            margin-bottom: 32px;
             line-height: 1.4;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd93d, #ff6b35);
+            width: 0%;
+            transition: width 0.4s ease;
+            border-radius: 3px;
         }
 
         .answers {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            width: 100%;
+            gap: 16px;
+            flex: 1;
         }
 
         .answer {
-            padding: 18px 24px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,230,120,0.3);
             border-radius: 16px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 1em;
+            font-size: 1.1em;
             text-align: left;
             position: relative;
-            overflow: hidden;
         }
 
         .answer:hover {
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,230,120,0.6);
+            box-shadow: 0 0 12px rgba(255,230,120,0.6);
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
         .answer:active {
-            transform: scale(0.98);
+            transform: scale(0.96);
         }
 
         .answer.selected {
-            background: linear-gradient(45deg, rgba(168, 230, 207, 0.4), rgba(255, 217, 61, 0.4));
-            border-color: rgba(168, 230, 207, 0.6);
-            box-shadow: 0 0 20px rgba(168, 230, 207, 0.4);
+            background: linear-gradient(45deg, rgba(255,230,120,0.4), rgba(255,107,53,0.4));
+            border-color: #ffd93d;
+            box-shadow: 0 0 20px rgba(255,230,120,0.8);
         }
 
         .btn {
-            padding: 16px 40px;
-            background: linear-gradient(45deg, #a8e6cf, #ffd93d);
-            color: #1a1a2e;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(45deg, #ffd93d, #ff6b35);
+            color: #1a1a1a;
             border: none;
             border-radius: 50px;
-            font-size: 1.1em;
+            font-size: 1.2em;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(168, 230, 207, 0.4);
+            box-shadow: 0 8px 25px rgba(255,230,120,0.4);
             margin-top: 20px;
-            min-width: 180px;
         }
 
         .btn:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 15px 35px rgba(168, 230, 207, 0.6);
-        }
-
-        .btn:active {
-            transform: scale(0.98);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(255,230,120,0.6);
         }
 
         .result-name {
-            font-size: 1.8em;
-            margin-bottom: 15px;
-            background: linear-gradient(45deg, #a8e6cf, #ffd93d);
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ffd93d, #ff6b35);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(168, 230, 207, 0.5);
+            text-shadow: 0 0 25px rgba(255,230,120,0.7);
         }
 
         .result-description {
             line-height: 1.6;
+            margin-bottom: 24px;
             opacity: 0.95;
-            max-width: 320px;
-            margin-bottom: 30px;
+            font-size: 1.1em;
         }
 
-        .progress {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #a8e6cf, #ffd93d);
-            transition: width 0.3s ease;
+        .result-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 24px;
+            box-shadow: 0 0 40px rgba(255,230,120,0.4);
+            margin-top: 24px;
+            animation: pulse 3s ease-in-out infinite;
         }
 
-        .progress-bar {
-            position: relative;
-            background: rgba(255, 255, 255, 0.1);
-            height: 4px;
-            border-radius: 0 2px 2px 0;
-            margin-bottom: 20px;
-            overflow: hidden;
+        @keyframes pulse {
+            0%, 100% { opacity: 0.9; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
         }
 
-        @media (max-width: 768px) {
-            .quiz-container {
-                right: 16px;
-                left: 16px;
-                width: auto;
-                max-width: none;
-                height: 85vh;
-                top: 7.5vh;
-                transform: none;
+        @media (max-width: 992px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .hero {
+                flex-basis: auto;
+                height: 40vh;
+                order: 1;
+            }
+            
+            .game-zone {
+                flex-basis: auto;
+                height: 60vh;
+                padding-right: 0;
+                order: 2;
+            }
+            
+            .quiz-card {
+                max-width: 480px;
+                margin: 0 auto;
             }
         }
 
         @media (max-width: 480px) {
-            h1 { font-size: 1.8em; }
-            .question-text { font-size: 1.1em; }
-            .answer { padding: 15px 20px; font-size: 0.95em; }
+            .quiz-card {
+                max-width: 420px;
+                padding: 24px;
+            }
+            
+            h1 { font-size: 2em; }
+            .question-text { font-size: 1.3em; }
+            .answer { padding: 16px; font-size: 1em; }
         }
     </style>
 </head>
 <body>
-    <div class="quiz-container" id="quizContainer">
-        <!-- Welcome Screen -->
-        <div class="screen active" id="welcomeScreen">
-            <h1 id="quizTitle"></h1>
-            <p class="subtitle" id="quizSubtitle"></p>
-            <button class="btn" id="startBtn">Begin the Sorting</button>
-        </div>
-
-        <!-- Questions Screen -->
-        <div class="screen" id="questionsScreen">
-            <div class="progress-bar">
-                <div class="progress" id="progress"></div>
+    <div class="hero"></div>
+    
+    <div class="game-zone">
+        <div class="quiz-card">
+            <!-- Welcome Screen -->
+            <div class="screen active" id="welcomeScreen">
+                <h1 id="quizTitle">Winter Sorting Hat</h1>
+                <p class="subtitle" id="quizSubtitle">Answer a few winter questions and let the magic hat choose your house. Be yourself and follow your winter heart.</p>
+                <button class="btn" id="startBtn">Begin the Sorting</button>
             </div>
-            <h2 class="question-text" id="questionText"></h2>
-            <div class="answers" id="answers"></div>
-        </div>
 
-        <!-- Result Screen -->
-        <div class="screen" id="resultScreen">
-            <h2 class="result-name" id="resultName"></h2>
-            <p class="result-description" id="resultDescription"></p>
-            <button class="btn" id="againBtn">Try again</button>
+            <!-- Questions Screen -->
+            <div class="screen" id="questionsScreen">
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <h2 class="question-text" id="questionText"></h2>
+                <div class="answers" id="answers"></div>
+            </div>
+
+            <!-- Result Screen -->
+            <div class="screen" id="resultScreen">
+                <h2 class="result-name" id="resultName"></h2>
+                <p class="result-description" id="resultDescription"></p>
+                <img class="result-image" id="resultImage" alt="Your house emblem">
+                <button class="btn" id="againBtn">Try again</button>
+            </div>
         </div>
     </div>
 
@@ -228,25 +282,25 @@
                     key: "brave",
                     name: "Snow Lion House",
                     description: "You are the kind of person who runs into snowy adventures. You feel excited when you play in the cold wind. You can help friends in winter games. You should always be brave like a lion in the snow. The school loves your energy!",
-                    imageUrl: "PLACEHOLDER_IMAGE_brave"
+                    imageUrl: "https://i.postimg.cc/nV6mG0FP/photo-2025-11-24-14-40-32.jpg"
                 },
                 {
                     key: "wise",
                     name: "Ice Owl House",
                     description: "You are the kind of person who reads books by the fire. You stay calm when snow falls outside. You plan smart projects for winter lessons. You can choose the best ideas for your classmates. The school sees your wise owl spirit.",
-                    imageUrl: "PLACEHOLDER_IMAGE_wise"
+                    imageUrl: "https://i.postimg.cc/3rPGFn8P/photo-2025-11-24-14-43-20.jpg"
                 },
                 {
                     key: "loyal",
                     name: "Frost Badger House",
                     description: "You are the kind of person who helps friends with hot chocolate. You join every winter event with a smile. You talk and make everyone feel warm. You should always be friendly like a badger in the frost. The school needs your loyal heart.",
-                    imageUrl: "PLACEHOLDER_IMAGE_loyal"
+                    imageUrl: "https://i.postimg.cc/zD9hF0z2/photo-2025-11-24-14-42-30.jpg"
                 },
                 {
                     key: "ambitious",
                     name: "Glacier Serpent House",
                     description: "You are the kind of person who plans careful steps in the snow. You feel shy but dream big for winter quests. You can lead with smart choices. You should use your ideas to win school challenges. The school admires your glacier ambition.",
-                    imageUrl: "PLACEHOLDER_IMAGE_ambitious"
+                    imageUrl: "https://i.postimg.cc/KcKLTd2W/photo-2025-11-24-14-41-13.jpg"
                 }
             ],
 
@@ -379,6 +433,7 @@
             answers: document.getElementById('answers'),
             progress: document.getElementById('progress'),
             resultName: document.getElementById('resultName'),
+            resultImage: document.getElementById('resultImage'),
             resultDescription: document.getElementById('resultDescription'),
             againBtn: document.getElementById('againBtn')
         };
@@ -414,7 +469,7 @@
             elements.questionText.textContent = question.text;
             
             elements.answers.innerHTML = '';
-            question.answers.forEach((answer, index) => {
+            question.answers.forEach(answer => {
                 const answerEl = document.createElement('div');
                 answerEl.className = 'answer';
                 answerEl.textContent = answer.text;
@@ -438,7 +493,7 @@
                 } else {
                     showResult();
                 }
-            }, 300);
+            }, 400);
         }
 
         function showResult() {
@@ -447,6 +502,7 @@
             const result = QUIZ_DATA.results.find(r => r.key === resultKeys[0]);
 
             elements.resultName.textContent = result.name;
+            elements.resultImage.src = result.imageUrl;
             elements.resultDescription.textContent = result.description;
             showScreen('result');
         }
