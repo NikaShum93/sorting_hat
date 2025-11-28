@@ -399,16 +399,15 @@
       questionCounterEl.textContent = "Question " + (currentIndex + 1) + " of " + QUESTIONS.length;
       questionTextEl.textContent = q.text;
 
-      // делаем копию и перемешиваем варианты
+      // копия и перемешивание вариантов
       var shuffled = q.options.slice().sort(function() {
         return Math.random() - 0.5;
       });
 
       shuffled.forEach(function(opt, i) {
         var btn = answerButtons[i];
-        var letterSpan = btn.querySelector("span:first-child");
+        // буквы A/B/C/D не трогаем – они уже в HTML
         var textSpan = btn.querySelector(".answer-text");
-        if (letterSpan) letterSpan.textContent = opt.letter;
         textSpan.textContent = opt.text;
         btn.setAttribute("data-house", opt.house);
       });
