@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winter Sorting Hat Quiz</title>
+    <style>
+        /* 1. GENERAL & BACKGROUND */
+        :root {
+            --bg-url: url('https://i.postimg.cc/FHkKR4Xm/photo-2025-11-24-14-34-50.jpg');
+            --color-gold: #FFD700;
+            --color-white: #f0f0f0;
+            --color-dark-card: rgba(0, 0, 0, 0.4);
+            --color-overlay: rgba(0, 0, 0, 0.6);
+            --card-blur: 10px;
+            --transition-speed: 0.35s;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Arial', sans-serif;
+            color: var(--color-white);
+            overflow: hidden; /* Prevent scroll on main body */
+        }
+
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: var(--bg-url);
+            background-size: cover;
+            background-position: center;
+            z-index: -2;
+        }
+
+        .background-overlay::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--color-overlay);
+            z-index: -1;
+        }
+
+        /* 2. TWO-COLUMN LAYOUT (FLEX) */
+        .quiz-container {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .left-side {
+            flex: 0 0 65%; /* 65% width */
+            /* Add a small dark gradient over the left side for better separation */
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.05));
+        }
+
+        .right-side {
+            flex: 0 0 35%; /* 35% width */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 32px; /* Отступ от правого края окна */
+            box-sizing: border-box;
+        }
+
+        /* 3. GAME CARD (GLASSMORPHISM) */
+        #quiz-card {
+            max-width: 580px;
+            width: 100%;
+            padding: 40px;
+            background: var(--color-dark-card);
+            border-radius: 16px;
+            backdrop-filter: blur(var(--card-blur));
+            border: 1px solid rgba(255, 215, 0, 0.2); /* Thin golden border */
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 215, 0, 0.3); /* Soft neon glow */
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        /* 4. SCREENS & ANIMATIONS */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: inherit;
+            box-sizing: border-box;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
+            pointer-events: none;
+            overflow-y: auto;
+        }
+
+        .screen.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+            position: relative; /* Only active screen is relative for layout */
+        }
+
+        /* WELCOME & RESULT STYLES */
+        #welcome-screen h1, #result-screen h2 {
+            font-size: 2.5em;
+            color: var(--color-gold);
+            margin-bottom: 0.5em;
+        }
+
+        #welcome-screen p, #result-screen p {
+            font-size: 1.1em;
+            line-height: 1.5;
+            margin-bottom: 2em;
+        }
+
+        /* QUESTIONS STYLES */
+        .question-counter {
+            font-size: 1em;
+            color: var(--color-gold);
+            margin-bottom: 1em;
+        }
+        
+        .question-text {
+            font-size: 1.4em;
+            margin-bottom: 1.5em;
+        }
+
+        .answer-button {
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--color-gold);
+            color: var(--color-white);
+            font-size: 1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+            text-align: left;
+        }
+
+        .answer-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 10px var(--color-gold);
+        }
+        
+        .answer-button:active {
+            transform: scale(0.98);
+        }
+
+        /* BUTTONS (General) */
+        .start-button, .again-button {
+            padding: 15px 30px;
+            background: var(--color-gold);
+            color: #1a1a1a;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.2s;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .start-button:hover, .again-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.8);
+        }
+        .start-button:active, .again-button:active {
+             transform: scale(0.96);
+        }
+
+        /* RESULT STYLES */
+        #result-image {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 24px;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            transition: box-shadow 0.5s ease;
+        }
+
+        /* Simple Pulse Animation */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 30px var(--color-gold); }
+            100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+        }
+        .pulse {
+            animation: pulse 3s infinite ease-in-out;
+        }
+
+        /* 7. ADAPTIVE (RESPONSIVE DESIGN) */
+        @media (max-width: 992px) {
+            .quiz-container {
+                flex-direction: column;
+            }
+
+            .left-side {
+                display: none; /* Hide the left side on small screens for better focus */
+            }
+
+            .right-side {
+                flex: 1;
+                padding: 40px 20px;
+                min-height: 100vh; /* Ensure the right side covers the full viewport */
+            }
+
+            #quiz-card {
+                max-width: 480px; /* Smaller max-width on mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="background-overlay"></div>
+
+<div class="quiz-container">
+    <div class="left-side">
+        </div>
+
+    <div class="right-side">
+        <div id="quiz-card">
+            
+            <div id="welcome-screen" class="screen active">
+                <h1 id="welcome-title"></h1>
+                <p id="welcome-subtitle"></p>
+                <button class="start-button" onclick="startQuiz()" id="start-button"></button>
+            </div>
+
+            <div id="question-screen" class="screen">
+                <div class="question-counter" id="question-counter"></div>
+                <div class="question-text" id="question-text"></div>
+                <div id="answers-container">
+                    </div>
+            </div>
+
+            <div id="result-screen" class="screen">
+                <h2 id="result-name"></h2>
+                <img id="result-image" class="pulse" src="" alt="House Emblem">
+                <p id="result-description"></p>
+                <button class="again-button" onclick="restartQuiz()" id="again-button"></button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // 6. JS LOGIC (NO LIBRARIES)
+
+    // A. QUIZ DATA (Copied from Step 3)
+    const QUIZ_DATA = {
+        title: "Winter Sorting Hat",
+        subtitle: "Answer a few winter questions and let the magic hat choose your house. Be yourself and follow your winter heart.",
+        buttonTextStart: "Begin the Sorting",
+        buttonTextAgain: "Try again",
+
+        results: [
+            {
+                key: "HOUSE_A",
+                name: "The House of Blazing Fire",
+                description: "Welcome to the House of Blazing Fire! You are brave and full of energy. When it is cold outside, you bring warmth and fun to everyone. You like action and you are never afraid of difficult tasks. In this magical school, you are the first to start a snowball fight or explore a dark forest. Your heart is hot like fire in the winter!",
+                imageUrl: "PLACEHOLDER_IMAGE_HOUSE_A"
+            },
+            {
+                key: "HOUSE_B",
+                name: "The House of Wise Owls",
+                description: "Welcome to the House of Wise Owls! You are calm and very smart. You love to read books by the fireplace and learn new magic spells. You think before you act. Your friends ask you for help with homework because you always know the answer. Like an owl in the winter night, you see everything clearly.",
+                imageUrl: "PLACEHOLDER_IMAGE_HOUSE_B"
+            },
+            {
+                key: "HOUSE_C",
+                name: "The House of Loyal Wolves",
+                description: "Welcome to the House of Loyal Wolves! You are a true friend. For you, the most important thing is your team and your family. You are kind and always ready to help. You don't like to be alone; you like to work and play together. In the cold winter, you stay close to your friends to keep them safe and warm.",
+                imageUrl: "PLACEHOLDER_IMAGE_HOUSE_C"
+            },
+            {
+                key: "HOUSE_D",
+                name: "The House of Silver Foxes",
+                description: "Welcome to the House of Silver Foxes! You are clever and careful. You always have a plan. You want to be the best student in the school. You choose your friends carefully. You like beautiful things and perfection. Like a fox in the snow, you move quietly and quickly to get what you want.",
+                imageUrl: "PLACEHOLDER_IMAGE_HOUSE_D"
+            }
+        ],
+
+        questions: [
+            {
+                text: "You arrive at the magical school. It is snowing hard. What do you do first?",
+                answers: [
+                    { text: "Run outside and catch snowflakes with my mouth!", resultKey: "HOUSE_A" },
+                    { text: "Read the school map to find the library.", resultKey: "HOUSE_B" },
+                    { text: "Find my friends and hug them.", resultKey: "HOUSE_C" },
+                    { text: "Check my bags and organize my things in my room.", resultKey: "HOUSE_D" }
+                ]
+            },
+            {
+                text: "In the Potions class, the teacher asks a difficult question.",
+                answers: [
+                    { text: "I shout the answer immediately! I am excited!", resultKey: "HOUSE_A" },
+                    { text: "I raise my hand quietly. I know the answer from the textbook.", resultKey: "HOUSE_B" },
+                    { text: "I look at my friend. Maybe we can answer together?", resultKey: "HOUSE_C" },
+                    { text: "I wait. I want to be sure my answer is perfect before I speak.", resultKey: "HOUSE_D" }
+                ]
+            },
+            {
+                text: "It is free time. Everyone is going outside. What game do you choose?",
+                answers: [
+                    { text: "A big, crazy snowball fight!", resultKey: "HOUSE_A" },
+                    { text: "I don't play. I watch and study the magical creatures nearby.", resultKey: "HOUSE_B" },
+                    { text: "Building a giant snowman with five other students.", resultKey: "HOUSE_C" },
+                    { text: "A competition to see who can make the best ice sculpture.", resultKey: "HOUSE_D" }
+                ]
+            },
+            {
+                text: "You see a first-year student. He looks sad and cold.",
+                answers: [
+                    { text: "I say, 'Come on! Let's run and warm up!'", resultKey: "HOUSE_A" },
+                    { text: "I tell him where to find the teacher or hot tea.", resultKey: "HOUSE_B" },
+                    { text: "I give him my scarf and ask, 'Are you okay?'", resultKey: "HOUSE_C" },
+                    { text: "I look at him, but I continue walking to my class. I am busy.", resultKey: "HOUSE_D" }
+                ]
+            },
+            {
+                text: "What is your favorite magical object?",
+                answers: [
+                    { text: "A flying broomstick that goes very fast.", resultKey: "HOUSE_A" },
+                    { text: "An old book of secrets and history.", resultKey: "HOUSE_B" },
+                    { text: "A magic mirror that shows my friends.", resultKey: "HOUSE_C" },
+                    { text: "A silver crown that glows in the dark.", resultKey: "HOUSE_D" }
+                ]
+            },
+            {
+                text: "A scary Ice Monster appears near the school gates!",
+                answers: [
+                    { text: "I take my wand and fight it! I am not scared!", resultKey: "HOUSE_A" },
+                    { text: "I think about its weakness. Is it fire or light?", resultKey: "HOUSE_B" },
+                    { text: "I stand in front of the small students to protect them.", resultKey: "HOUSE_C" },
+                    { text: "I hide and watch. I need to know what it does first.", resultKey: "HOUSE_D" }
+                ]
+            },
+            {
+                text: "Your best friend is sleeping, but they have a lot of homework for tomorrow.",
+                answers: [
+                    { text: "I wake them up loudly. 'Wake up! Let's do it now!'", resultKey: "HOUSE_A" },
+                    { text: "I write a note with useful page numbers for them.", resultKey: "HOUSE_B" },
+                    { text: "I do some of the homework for them. I want to help.", resultKey: "HOUSE_C" },
+                    { text: "It is their problem. I finish my own homework first.", resultKey: "HOUSE_D" }
+                ]
+            },
+            {
+                text: "The Headmaster gives a prize for the best winter project.",
+                answers: [
+                    { text: "I want to win because I love winning!", resultKey: "HOUSE_A" },
+                    { text: "I want to make a project that discovers something new.", resultKey: "HOUSE_B" },
+                    { text: "I want to make a project that makes everyone happy.", resultKey: "HOUSE_C" },
+                    { text: "I want to win so everyone knows my name.", resultKey: "HOUSE_D" }
+                ]
+            },
+            {
+                text: "You are in the Great Hall drinking hot chocolate. How do you drink it?",
+                answers: [
+                    { text: "Quickly! Then I go to find adventure.", resultKey: "HOUSE_A" },
+                    { text: "Slowly, while reading a story.", resultKey: "HOUSE_B" },
+                    { text: "I sit at a big table and talk with everyone.", resultKey: "HOUSE_C" },
+                    { text: "I sit by the window and look at the snow alone.", resultKey: "HOUSE_D" }
+                ]
+            },
+            {
+                text: "You find a secret door in the castle wall.",
+                answers: [
+                    { text: "Open it right away! What is inside?", resultKey: "HOUSE_A" },
+                    { text: "Look for a sign or a symbol to understand what it is.", resultKey: "HOUSE_B" },
+                    { text: "Call my friends. We should go in together.", resultKey: "HOUSE_C" },
+                    { text: "Keep it a secret. This is my discovery.", resultKey: "HOUSE_D" }
+                ]
+            },
+            {
+                text: "Describe your perfect winter evening.",
+                answers: [
+                    { text: "Dancing and singing loud songs by the fire.", resultKey: "HOUSE_A" },
+                    { text: "Silence, a warm blanket, and a magic spell book.", resultKey: "HOUSE_B" },
+                    { text: "Telling stories to my classmates and laughing.", resultKey: "HOUSE_C" },
+                    { text: "Planning my schedule for the next week.", resultKey: "HOUSE_D" }
+                ]
+            },
+            {
+                text: "The Sorting Hat asks: 'What is most important to you?'",
+                answers: [
+                    { text: "Courage and Fun.", resultKey: "HOUSE_A" },
+                    { text: "Knowledge and Logic.", resultKey: "HOUSE_B" },
+                    { text: "Friendship and Kindness.", resultKey: "HOUSE_C" },
+                    { text: "Success and Ambition.", resultKey: "HOUSE_D" }
+                ]
+            }
+        ]
+    };
+
+    // B. IMAGE MAPPING LOGIC
+    const IMAGE_MAP = {
+        // Mapping based on archetypes (Brave, Ambitious, Loyal, Wise) to the provided image URLs
+        "HOUSE_A": "https://i.postimg.cc/nV6mG0FP/photo-2025-11-24-14-40-32.jpg", // Brave/Fire -> Gryffindor
+        "HOUSE_D": "https://i.postimg.cc/KcKLTd2W/photo-2025-11-24-14-41-13.jpg", // Ambitious/Foxes -> Slytherin
+        "HOUSE_C": "https://i.postimg.cc/zD9hF0z2/photo-2025-11-24-14-42-30.jpg", // Loyal/Wolves -> Hufflepuff
+        "HOUSE_B": "https://i.postimg.cc/3rPGFn8P/photo-2025-11-24-14-43-20.jpg"  // Wise/Owls -> Ravenclaw
+    };
+
+    QUIZ_DATA.results.forEach(result => {
+        if (IMAGE_MAP[result.key]) {
+            result.imageUrl = IMAGE_MAP[result.key];
+        }
+    });
+
+    // C. QUIZ STATE & VARIABLES
+    let scores = {};
+    let currentQuestionIndex = 0;
+
+    const screens = {
+        welcome: document.getElementById('welcome-screen'),
+        question: document.getElementById('question-screen'),
+        result: document.getElementById('result-screen')
+    };
+    
+    // D. SCREEN MANAGEMENT
+    function showScreen(screenId) {
+        Object.values(screens).forEach(screen => {
+            if (screen.id === screenId) {
+                screen.classList.add('active');
+            } else {
+                screen.classList.remove('active');
+            }
+        });
+    }
+
+    function showWelcome() {
+        document.getElementById('welcome-title').innerText = QUIZ_DATA.title;
+        document.getElementById('welcome-subtitle').innerText = QUIZ_DATA.subtitle;
+        document.getElementById('start-button').innerText = QUIZ_DATA.buttonTextStart;
+        showScreen('welcome-screen');
+    }
+
+    function startQuiz() {
+        // Initialize scores
+        QUIZ_DATA.results.forEach(result => {
+            scores[result.key] = 0;
+        });
+        currentQuestionIndex = 0;
+        showQuestion();
+    }
+
+    function showQuestion() {
+        if (currentQuestionIndex >= QUIZ_DATA.questions.length) {
+            showResult();
+            return;
+        }
+
+        const question = QUIZ_DATA.questions[currentQuestionIndex];
+        
+        document.getElementById('question-counter').innerText = 
+            `Question ${currentQuestionIndex + 1} of ${QUIZ_DATA.questions.length}`;
+        document.getElementById('question-text').innerText = question.text;
+        
+        const answersContainer = document.getElementById('answers-container');
+        answersContainer.innerHTML = ''; // Clear previous buttons
+
+        question.answers.forEach(answer => {
+            const button = document.createElement('button');
+            button.className = 'answer-button';
+            button.innerText = answer.text;
+            button.onclick = () => selectAnswer(answer.resultKey);
+            answersContainer.appendChild(button);
+        });
+
+        showScreen('question-screen');
+    }
+
+    window.selectAnswer = function(resultKey) {
+        scores[resultKey]++;
+        currentQuestionIndex++;
+        
+        // Timeout to allow the button click animation to complete (0.1s)
+        setTimeout(() => {
+            showQuestion();
+        }, 150); 
+    };
+
+    function showResult() {
+        // 1. Find the winning house (key with max score)
+        let winningKey = null;
+        let maxScore = -1;
+        
+        for (const key in scores) {
+            if (scores[key] > maxScore) {
+                maxScore = scores[key];
+                winningKey = key;
+            }
+        }
+
+        // 2. Find the result object
+        const result = QUIZ_DATA.results.find(r => r.key === winningKey);
+
+        // 3. Render the result
+        document.getElementById('result-name').innerText = result.name;
+        
+        // Replace newlines with <br> for multi-line display
+        document.getElementById('result-description').innerHTML = result.description.replace(/\n/g, '<br>');
+        
+        const resultImage = document.getElementById('result-image');
+        resultImage.src = result.imageUrl;
+        resultImage.alt = result.name;
+
+        document.getElementById('again-button').innerText = QUIZ_DATA.buttonTextAgain;
+        
+        showScreen('result-screen');
+    }
+
+    window.restartQuiz = function() {
+        // No need to reset scores here, as startQuiz does that
+        showWelcome();
+    };
+
+    // Initialize the quiz on load
+    document.addEventListener('DOMContentLoaded', showWelcome);
+</script>
+
+</body>
+</html>
